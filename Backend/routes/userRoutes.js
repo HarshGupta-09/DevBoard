@@ -37,56 +37,75 @@ userRouter.post("/signup", async (req, res) => {
       });
     }
     const hashPassword = await bcrypt.hash(password, 10);
-  const user =   await userModel.create({
+    const user = await userModel.create({
       name,
       email,
       password: hashPassword,
     });
     res.status(201).json({
-        message : "SignUp succesfull",
-        userId : user._id,
-    })
-
-
-
+      message: "SignUp succesfull",
+      userId: user._id,
+    });
   } catch (error) {
     return res.status(500).json({
-        message : "Internal Server Error",
-    })
+      message: "Internal Server Error",
+    });
   }
 });
 
-userRouter.post("/signin",async(req,res)=>{
-    try {
-        const result = signinSchema.safeParse(req.body);
-        if (!result.success) {
+userRouter.post("/signin", async (req, res) => {
+  try {
+    const result = signinSchema.safeParse(req.body);
+
+    if (!result.success) {
       return res.status(400).json({
         message: "Invalid input",
       });
     }
-    const { email , password } = result.data;
-      const user = await userModel.findOne({ email });
+
+    const { email, password } = result.data;
+
+    const user = await userModel.findOne({ email });
 
     if (!user) {
       return res.status(401).json({
         message: "Invalid email or password",
       });
     }
-    const isMatch = bcrypt.compare(password,user.password)
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(401).json({
         message: "Invalid email or password",
       });
     }
 
-    // Token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-    
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
 
-        
-    } catch (error) {
-        
-    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server error",
+    });
+  }
+});
+
+userRouter.get("/me",authMiddleware,(req,res)=>{
+
 })
 
 
