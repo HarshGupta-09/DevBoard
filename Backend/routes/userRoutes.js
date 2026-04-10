@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import z, { email } from "zod";
 import userModel from "../models/User.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 const userRouter = express.Router();
 
 // validations Schema's
@@ -47,8 +48,8 @@ userRouter.post("/signup", async (req, res) => {
       userId: user._id,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Internal Server Error",
+    res.status(500).json({
+      message: "Internal Server error",
     });
   }
 });
@@ -104,9 +105,30 @@ userRouter.post("/signin", async (req, res) => {
   }
 });
 
-userRouter.get("/me",authMiddleware,(req,res)=>{
+userRouter.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-})
+    const user = await userModel
+      .findById(userId)
+      .select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({ user });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+});
+
+
 
 
 export default userRouter;
