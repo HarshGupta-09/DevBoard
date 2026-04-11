@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import connectDB from "./config/db.js"
 import userRouter from "./routes/userRoutes.js"
 import clientRouter from "./routes/clientRoutes.js"
+import projectRouter from "./routes/projectRoutes.js"
 dotenv.config();
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(express.json());
 
 app.use("/api/auth/users",userRouter);
 app.use("/api/clients",clientRouter);
-
+app.use("/api/projects",projectRouter);
 
 
 
