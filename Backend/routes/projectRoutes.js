@@ -148,4 +148,79 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+import mongoose from "mongoose";
+
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const projectId = req.params.id;
+
+    // 🔒 validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+      return res.status(400).json({
+        message: "Invalid project ID",
+      });
+    }
+
+    const project = await projectModel.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    if (project.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    // ✅ validation
+    const result = projectSchema.partial().safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid input",
+        error: result.error,
+      });
+    }
+
+    const updateData = result.data;
+
+  
+    if (updateData.client) {
+      const clientExists = await clientModel.findById(updateData.client);
+
+      if (!clientExists) {
+        return res.status(404).json({
+          message: "Client not found",
+        });
+      }
+
+      if (clientExists.user.toString() !== req.user.id) {
+        return res.status(403).json({
+          message: "Access denied",
+        });
+      }
+    }
+
+    const updatedProject = await projectModel.findByIdAndUpdate(
+      projectId,
+      { $set: updateData },
+      { new: true }
+    );
+
+    res.status(200).json({
+      updatedProject,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+});
+
+
 export default router;
