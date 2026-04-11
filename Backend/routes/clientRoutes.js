@@ -18,7 +18,7 @@ const clientSchema = z.object({
 
   notes: z.string().min(6).trim().optional(),
 });
-
+// create a new clinet
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const result = clientSchema.safeParse(req.body);
@@ -120,5 +120,90 @@ router.get("/:id", authMiddleware, async (req, res) => {
     });
   }
 });
+
+//Update client
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const clientId = req.params.id;
+
+    const client = await clientModel.findById(clientId);
+
+    if (!client) {
+      return res.status(404).json({
+        message: "Client not found",
+      });
+    }
+
+    if (client.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    
+    const result = clientSchema.partial().safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid input",
+        error: result.error,
+      });
+    }
+
+    const updatedClient = await clientModel.findByIdAndUpdate(
+      clientId,
+      { $set: result.data }, // only update provided fields
+      { new: true } 
+    );
+
+    res.status(200).json({
+      updatedClient,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+});
+
+// Delete
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const clientId = req.params.id;
+
+    const client = await clientModel.findById(clientId);
+
+    if (!client) {
+      return res.status(404).json({
+        message: "Client not found",
+      });
+    }
+
+    if (client.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+    const deletedClient = await clientModel.findByIdAndDelete(clientId);
+
+    
+
+    res.status(200).json({
+      message : "Client Deleted Successfully",
+      deletedClient
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+});
+
+
+
 
 export default router;
