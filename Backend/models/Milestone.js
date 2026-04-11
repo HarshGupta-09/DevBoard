@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const milestoneSchema = new mongoose.Schema({
 
     user: {
@@ -40,3 +42,8 @@ const milestoneSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+milestoneSchema.index({ project: 1, order: 1 }, { unique: true });
+
+const milestoneModel = mongoose.model("Milestone", milestoneSchema);
+
+export default milestoneModel;

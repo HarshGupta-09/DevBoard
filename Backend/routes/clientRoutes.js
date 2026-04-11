@@ -2,7 +2,8 @@ import express from "express";
 import clientModel from "../models/Client.js";
 import z from "zod";
 import authMiddleware from "../middlewares/authMiddleware.js";
-
+import milestoneModel from "../models/Milestone.js"
+import projectModel from "../models/Project.js";
 const router = express.Router();
 
 const clientSchema = z.object({
@@ -169,10 +170,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 // Delete
+
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const clientId = req.params.id;
 
+    // 1. Find client
     const client = await clientModel.findById(clientId);
 
     if (!client) {
@@ -181,18 +184,45 @@ router.delete("/:id", authMiddleware, async (req, res) => {
       });
     }
 
+    // 2. Ownership check
     if (client.user.toString() !== req.user.id) {
       return res.status(403).json({
         message: "Access denied",
       });
     }
-    const deletedClient = await clientModel.findByIdAndDelete(clientId);
 
-    
+    // 3. Get all projects of this client
+    const projects = await projectModel.find({ client: clientId });
+
+    // 4. Check if any project is NOT completed
+    const hasActiveProjects = projects.some(
+      (project) => project.status !== "completed"
+    );
+
+    if (hasActiveProjects) {
+      return res.status(400).json({
+        message: "Cannot delete client with active projects",
+      });
+    }
+
+    // 5. Extract project IDs
+    const projectIds = projects.map((p) => p._id);
+
+    // 6. Delete all milestones related to these projects
+    await milestoneModel.deleteMany({
+      project: { $in: projectIds },
+    });
+
+    // 7. Delete all projects
+    await projectModel.deleteMany({
+      client: clientId,
+    });
+
+    // 8. Delete client
+    await clientModel.findByIdAndDelete(clientId);
 
     res.status(200).json({
-      message : "Client Deleted Successfully",
-      deletedClient
+      message: "Client and related data deleted successfully",
     });
 
   } catch (error) {
