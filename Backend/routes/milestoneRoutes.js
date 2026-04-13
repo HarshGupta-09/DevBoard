@@ -99,9 +99,169 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+// ye get route uss project k saare milestones return krdega sorted form mai
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { projectId } = req.query;
 
+    if (!projectId) {
+      return res.status(400).json({
+        message: "Project ID is required",
+      });
+    }
 
+    const project = await projectModel.findById(projectId);
 
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    if (project.user.toString() !== userId) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    const milestones = await milestoneModel
+      .find({ project: projectId })
+      .sort({ order: 1 });
+
+    res.status(200).json({
+      milestones,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+    });
+  }
+});
+
+// update a milestone
+
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const milestoneId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(milestoneId)) {
+      return res.status(400).json({
+        message: "Invalid milestone ID",
+      });
+    }
+
+    const milestone = await milestoneModel.findById(milestoneId);
+
+    if (!milestone) {
+      return res.status(404).json({
+        message: "Milestone not found",
+      });
+    }
+
+    if (milestone.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    const result = mileStoneSchema.partial().safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid input",
+        error: result.error,
+      });
+    }
+
+    const updateData = result.data;
+
+    
+    if (updateData.project) {
+      const projectExist = await projectModel.findById(updateData.project);
+
+      if (!projectExist) {
+        return res.status(404).json({
+          message: "Project not found",
+        });
+      }
+
+      if (projectExist.user.toString() !== req.user.id) {
+        return res.status(403).json({
+          message: "Access denied",
+        });
+      }
+    }
+    if (updateData.order !== undefined) {
+      const orderExists = await milestoneModel.findOne({
+        project: milestone.project,
+        order: updateData.order,
+        _id: { $ne: milestoneId },
+      });
+
+      if (orderExists) {
+        return res.status(400).json({
+          message: "Milestone with same order already exists in this project",
+        });
+      }
+    }
+
+    const updatedMilestone = await milestoneModel.findByIdAndUpdate(
+      milestoneId,
+      { $set: updateData },
+      { new: true }
+    );
+
+    res.status(200).json({
+      updatedMilestone,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+});
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const milestoneId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(milestoneId)) {
+      return res.status(400).json({
+        message: "Invalid milestone ID",
+      });
+    }
+
+    const milestone = await milestoneModel.findById(milestoneId);
+
+    if (!milestone) {
+      return res.status(404).json({
+        message: "Milestone not found",
+      });
+    }
+
+    if (milestone.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    await milestoneModel.findByIdAndDelete(milestoneId);
+
+    res.status(200).json({
+      message: "Milestone deleted successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+});
 
 
 

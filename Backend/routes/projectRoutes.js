@@ -152,7 +152,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const projectId = req.params.id;
 
-    // 🔒 validate ObjectId
+  
     if (!mongoose.Types.ObjectId.isValid(projectId)) {
       return res.status(400).json({
         message: "Invalid project ID",
@@ -173,7 +173,6 @@ router.put("/:id", authMiddleware, async (req, res) => {
       });
     }
 
-    // ✅ validation
     const result = projectSchema.partial().safeParse(req.body);
 
     if (!result.success) {
