@@ -4,7 +4,7 @@ import z from "zod";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import milestoneModel from "../models/Milestone.js";
 import projectModel from "../models/Project.js";
-
+import mongoose from "mongoose";
 const router = express.Router();
 
 const projectSchema = z.object({
@@ -109,7 +109,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // return a single project
-import mongoose from "mongoose";
+
 
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
@@ -148,7 +148,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-import mongoose from "mongoose";
+
 
 router.put("/:id", authMiddleware, async (req, res) => {
   try {

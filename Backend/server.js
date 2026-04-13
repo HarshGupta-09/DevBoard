@@ -9,9 +9,6 @@ const app = express();
 
 
 
-
-
-
 //Middlwares
 app.use(express.json());
 
