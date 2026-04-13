@@ -38,7 +38,7 @@ router.post("/", authMiddleware, async (req, res) => {
 
     const userId = req.user.id;
 
-    // 🔒 validate client
+    //  validate client
     const clientExists = await clientModel.findById(client);
 
     if (!clientExists) {
@@ -53,7 +53,7 @@ router.post("/", authMiddleware, async (req, res) => {
       });
     }
 
-    // optional duplicate check
+    
     const existingProject = await projectModel.findOne({
       user: userId,
       client,
