@@ -25,15 +25,6 @@ app.use("/api/projects",projectRouter);
 
 
 
-
-
-
-
-
-
-
-
-
 connectDB();
 const port = process.env.PORT || 3000;
 

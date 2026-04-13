@@ -109,8 +109,6 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // return a single project
-
-
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const projectId = req.params.id;
@@ -149,7 +147,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
 });
 
 
-
+// updae a project
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const projectId = req.params.id;
@@ -221,6 +219,50 @@ router.put("/:id", authMiddleware, async (req, res) => {
     });
   }
 });
+
+// Delete  project 
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const projectId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+      return res.status(400).json({
+        message: "Invalid project ID",
+      });
+    }
+
+    const project = await projectModel.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    if (project.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    await milestoneModel.deleteMany({ project: projectId });
+
+    // delete project
+    await projectModel.findByIdAndDelete(projectId);
+
+    res.status(200).json({
+      message: "Project and related data deleted successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+});
+
 
 
 export default router;
