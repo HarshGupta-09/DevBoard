@@ -1,11 +1,14 @@
-import express from "express"
 import dotenv from "dotenv"
+dotenv.config();
+import express from "express"
 import connectDB from "./config/db.js"
 import userRouter from "./routes/userRoutes.js"
 import clientRouter from "./routes/clientRoutes.js"
 import projectRouter from "./routes/projectRoutes.js"
 import milestoneRouter from "./routes/milestoneRoutes.js"
-dotenv.config();
+import aiRouter from "./routes/aiRoutes.js"
+
+
 const app = express();
 
 
@@ -19,6 +22,7 @@ app.use("/api/auth/users",userRouter);
 app.use("/api/clients",clientRouter);
 app.use("/api/projects",projectRouter);
 app.use("/api/milestones",milestoneRouter);
+app.use("/api/ai",aiRouter);
 
 
 
