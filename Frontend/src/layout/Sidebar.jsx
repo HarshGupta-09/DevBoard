@@ -7,6 +7,7 @@ import {
   FileText,
   Receipt,
 } from "lucide-react";
+
 const Sidebar = () => {
   const menu = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -18,9 +19,19 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-[220px] h-screen bg-white rounded-xl m-3 p-3 shadow-sm">
+    <div className="w-[240px] h-screen bg-white rounded-xl m-3 p-4 border border-gray-200 flex flex-col">
       
-      <div className="space-y-2">
+      {/* 🔹 Logo / Brand */}
+      <div className="mb-6 px-2">
+        <h1 className="text-xl font-semibold text-indigo-600 tracking-tight">
+          DevBoard
+        </h1>
+
+        <div className="mt-4 border-b border-gray-200"></div>
+      </div>
+
+      {/* 🔹 Menu */}
+      <div className="flex flex-col gap-1">
         {menu.map((item) => {
           const Icon = item.icon;
 
@@ -31,7 +42,7 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${
                   isActive
-                    ? "bg-[#F1F1F9] text-black font-medium"
+                    ? "bg-indigo-50 text-indigo-600 font-medium"
                     : "text-gray-600 hover:bg-gray-100"
                 }`
               }
@@ -41,6 +52,11 @@ const Sidebar = () => {
             </NavLink>
           );
         })}
+      </div>
+
+      {/* 🔹 Bottom space (future use: logout/settings) */}
+      <div className="mt-auto text-xs text-gray-400 px-2">
+        v1.0 DevBoard
       </div>
     </div>
   );
