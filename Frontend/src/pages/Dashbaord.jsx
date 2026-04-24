@@ -22,17 +22,17 @@ const Dashboard = () => {
       {/* RIGHT */}
       <div className="flex gap-3">
         
-        <Button variant="outline" className="flex items-center">
+        <Button variant="outline" className="flex items-center cursor-pointer">
           <Plus size={16} className="mr-2" />
           New Client
         </Button>
 
-        <Button variant="outline" className="flex items-center">
+        <Button variant="outline" className="flex items-center cursor-pointer">
           <Plus size={16} className="mr-2" />
           New Project
         </Button>
-
-        <Button className="bg-indigo-600 hover:bg-indigo-700 flex items-center">
+ 
+        <Button className="bg-indigo-600 hover:bg-indigo-700 flex items-center cursor-pointer">
           <Plus size={16} className="mr-2" />
           Generate Proposal
         </Button>
