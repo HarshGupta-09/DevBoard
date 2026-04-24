@@ -19,15 +19,14 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-[240px] h-screen bg-white rounded-xl m-3 p-4 border border-gray-200 flex flex-col">
+    <div className="w-[240px] h-screen bg-[#0F0F12] border-r border-gray-800 flex flex-col px-4 py-5">
       
-      {/* 🔹 Logo / Brand */}
-      <div className="mb-6 px-2">
-        <h1 className="text-xl font-semibold text-indigo-600 tracking-tight">
+      {/* 🔹 Logo */}
+      <div className="mb-6">
+        <h1 className="text-lg font-semibold text-white tracking-tight">
           DevBoard
         </h1>
-
-        <div className="mt-4 border-b border-gray-200"></div>
+        <p className="text-xs text-gray-500">v1.0</p>
       </div>
 
       {/* 🔹 Menu */}
@@ -42,8 +41,8 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${
                   isActive
-                    ? "bg-indigo-50 text-indigo-600 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-indigo-600/20 text-indigo-400"
+                    : "text-gray-400 hover:bg-white/5 hover:text-white"
                 }`
               }
             >
@@ -54,9 +53,15 @@ const Sidebar = () => {
         })}
       </div>
 
-      {/* 🔹 Bottom space (future use: logout/settings) */}
-      <div className="mt-auto text-xs text-gray-400 px-2">
-        v1.0 DevBoard
+      {/* 🔹 Bottom user (optional like your reference) */}
+      <div className="mt-auto pt-6 border-t border-gray-800 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold">
+          H
+        </div>
+        <div>
+          <p className="text-sm text-white">Harsh Gupta</p>
+          <p className="text-xs text-gray-500">harsh@devboard.io</p>
+        </div>
       </div>
     </div>
   );

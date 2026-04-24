@@ -2,16 +2,23 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+
 const AppLayout = () => {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-[#0B0B0F] text-white">
+      
+      {/* Sidebar */}
       <Sidebar />
 
-      <div className="flex-1 bg-gray-100">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        
         <Navbar />
-        <div className="p-3">
+
+        <main className="flex-1 p-6">
           <Outlet />
-        </div>
+        </main>
+
       </div>
     </div>
   );
