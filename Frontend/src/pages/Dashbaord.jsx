@@ -1,3 +1,4 @@
+import RecentProjects from "@/components/common/RecentProjects";
 import StatCard from "@/components/common/StatCard";
 import { Button } from "@/components/ui/button";
 import { Plus,Users, FolderKanban, Receipt, IndianRupee } from "lucide-react";
@@ -90,7 +91,10 @@ const Dashboard = () => {
 />
 
 </section>
-    
+
+{/* Recent Projects  */}
+<RecentProjects/>
+
     
     </>
   );
