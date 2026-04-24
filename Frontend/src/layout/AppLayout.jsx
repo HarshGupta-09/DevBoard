@@ -5,19 +5,23 @@ import Navbar from "./Navbar";
 
 const AppLayout = () => {
   return (
-    <div className="flex min-h-screen bg-[#0B0B0F] text-white">
+    <div className="bg-[#07070A] min-h-screen">
       
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="ml-[240px] min-h-screen flex flex-col">
         
-        <Navbar />
+        {/* Navbar */}
+        <div className="sticky top-0 z-40">
+          <Navbar />
+        </div>
 
-        <main className="flex-1 p-6">
+        {/* Page Content */}
+        <div className="p-10  w-full ">
           <Outlet />
-        </main>
+        </div>
 
       </div>
     </div>
