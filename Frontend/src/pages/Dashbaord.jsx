@@ -2,6 +2,7 @@ import RecentClients from "@/components/common/RecentClients";
 import RecentProjects from "@/components/common/RecentProjects";
 import DashboardHeader from "@/components/common/DashboardHeader";
 import StatSection from "@/components/common/StatSection";
+import UpcomingDeadlines from "@/components/common/UpcomingDeadlines";
 
 const Dashboard = () => {
   return (
@@ -26,7 +27,7 @@ const Dashboard = () => {
 
         {/* Deadlines */}
         <div>
-          {/* UpcomingDeadlines */}
+          <UpcomingDeadlines/>
         </div>
 
       </div>
