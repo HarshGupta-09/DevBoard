@@ -41,7 +41,7 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${
                   isActive
-                    ? "bg-indigo-600/20 text-indigo-400"
+                    ? "bg-indigo-600/20 border border-indigo-500/20"
                     : "text-gray-400 hover:bg-white/5 hover:text-white"
                 }`
               }
