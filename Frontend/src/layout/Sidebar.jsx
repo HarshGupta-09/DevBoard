@@ -53,7 +53,7 @@ const Sidebar = () => {
         })}
       </div>
 
-      {/* 🔹 Bottom user (optional like your reference) */}
+      {/*  Bottom user  */}
       <div className="mt-auto pt-6 border-t border-gray-800 flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold">
           H
