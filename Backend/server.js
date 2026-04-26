@@ -7,15 +7,20 @@ import clientRouter from "./routes/clientRoutes.js"
 import projectRouter from "./routes/projectRoutes.js"
 import milestoneRouter from "./routes/milestoneRoutes.js"
 import aiRouter from "./routes/aiRoutes.js"
-
+import cors from 'cors'
 
 
 const app = express();
 
 
+app.use(cors({
+  origin: "http://localhost:5173",
+}));
 
 //Middlwares
 app.use(express.json());
+
+
 
 // Routes
 
