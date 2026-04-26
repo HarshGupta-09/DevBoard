@@ -1,41 +1,41 @@
 import React from "react";
 
-const projects = [
-  {
-    name: "E-commerce Platform",
-    client: "Tech Solutions Inc",
-    status: "In Progress",
-    amount: "₹25,000",
-    deadline: "Jan 30, 2026",
-    progress: 75,
-  },
-  {
-    name: "Mobile App Design",
-    client: "StartupX",
-    status: "In Progress",
-    amount: "₹18,000",
-    deadline: "Feb 15, 2026",
-    progress: 45,
-  },
-  {
-    name: "Brand Identity",
-    client: "Creative Agency",
-    status: "Pending",
-    amount: "₹12,000",
-    deadline: "Feb 28, 2026",
-    progress: 20,
-  },
-];
-
 const getStatusColor = (status) => {
-  if (status === "In Progress")
+  if (status === "active")
     return "bg-indigo-600/20 text-indigo-400";
-  if (status === "Pending")
-    return "bg-yellow-600/20 text-yellow-400";
-  return "bg-green-600/20 text-green-400";
+  if (status === "completed")
+    return "bg-green-600/20 text-green-400";
+  return "bg-gray-600/20 text-gray-400";
 };
 
-const RecentProjects = () => {
+// 🔹 date formatter
+const formatDate = (date) => {
+  if (!date) return "N/A";
+  return new Date(date).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+// 🔹 currency formatter
+const formatCurrency = (amount) => {
+  if (!amount) return "₹0";
+  return `₹${amount.toLocaleString("en-IN")}`;
+};
+
+const RecentProjects = ({ projects }) => {
+  console.log("Projects:", projects);
+
+  // 🔹 Loading
+  if (!projects) {
+    return (
+      <div className="mt-8 text-gray-400 text-sm">
+        Loading projects...
+      </div>
+    );
+  }
+
   return (
     <div className="mt-8 bg-[#111114] border border-gray-800 rounded-xl p-5">
       
@@ -49,56 +49,57 @@ const RecentProjects = () => {
         </button>
       </div>
 
-      {/* List */}
+      {/* Content */}
       <div className="flex flex-col gap-4">
-        {projects.map((project, index) => (
-          <div
-            key={index}
-            className="p-4 rounded-lg border border-gray-800 bg-[#0F0F12] hover:bg-[#1a1a1f] transition"
-          >
-            
-            {/* Top Row */}
-            <div className="flex items-center justify-between">
+
+        {/* 🔹 Empty */}
+        {projects.length === 0 ? (
+          <p className="text-gray-400 text-sm">No projects yet</p>
+        ) : (
+          projects.map((project) => (
+            <div
+              key={project._id}
+              className="p-4 rounded-lg border border-gray-800 bg-[#0F0F12] hover:bg-[#1a1a1f] transition"
+            >
               
-              {/* Left */}
-              <div>
-                <p className="text-white font-medium">
-                  {project.name}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {project.client}
-                </p>
+              {/* Top Row */}
+              <div className="flex items-center justify-between">
+                
+                {/* Left */}
+                <div>
+                  <p className="text-white font-medium">
+                    {project.title}
+                  </p>
+
+                  <p className="text-xs text-gray-400">
+                    {project.client?.name || "No Client"}
+                  </p>
+                </div>
+
+                {/* Status */}
+                <span
+                  className={`text-xs px-2 py-1 rounded-md ${getStatusColor(
+                    project.status
+                  )}`}
+                >
+                  {project.status}
+                </span>
               </div>
 
-              {/* Right */}
-              <span
-                className={`text-xs px-2 py-1 rounded-md ${getStatusColor(
-                  project.status
-                )}`}
-              >
-                {project.status}
-              </span>
-            </div>
+              {/* Bottom Row */}
+              <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
+                
+                <span>
+                  Deadline: {formatDate(project.deadline)}
+                </span>
 
-            {/* Progress */}
-            <div className="mt-3">
-              <div className="w-full h-1.5 bg-gray-800 rounded-full">
-                <div
-                  className="h-1.5 bg-indigo-500 rounded-full"
-                  style={{ width: `${project.progress}%` }}
-                />
+                <span className="text-white font-medium">
+                  {formatCurrency(project.budget)}
+                </span>
               </div>
             </div>
-
-            {/* Bottom Row */}
-            <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
-              <span>Deadline: {project.deadline}</span>
-              <span className="text-white font-medium">
-                {project.amount}
-              </span>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

@@ -91,18 +91,17 @@ router.post("/", authMiddleware, async (req, res) => {
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const projects = await projectModel.find({ user: userId });
-    if (projects.length === 0) {
-      return res.status(200).json({
-        message: "You don't have any Projects yet",
-        projects: [],
-      });
-    }
+
+    const projects = await projectModel
+      .find({ user: userId })
+      .populate("client", "name");
+
     res.status(200).json({
       projects,
     });
+
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server error",
     });
   }
