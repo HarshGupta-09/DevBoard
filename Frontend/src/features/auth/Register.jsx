@@ -22,7 +22,8 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await signupUser(form);
+       await signupUser(form);
+    
       navigate("/login");
     } catch (err) {
       console.log(err);
