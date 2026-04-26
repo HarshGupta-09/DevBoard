@@ -7,6 +7,8 @@ import Milestones from '../features/milestones/MilestonesPage'
 import Invoices from '../features/invoices/InvoicesPage'
 import Dashboard from "../pages/Dashbaord"
 import AppLayout from '@/layout/AppLayout';
+import Login from '@/features/auth/Login';
+import Register from '@/features/auth/Register';
 
 const AppRoutes = () => {
   return (
@@ -14,7 +16,7 @@ const AppRoutes = () => {
       <Routes>
 
         {/* Redirect root */}
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
 
         {/* Layout Routes */}
         <Route element={<AppLayout />}>
@@ -24,8 +26,11 @@ const AppRoutes = () => {
           <Route path="/milestones" element={<Milestones />} />
           <Route path="/ai-proposals" element={<Proposals />} />
           <Route path="/invoices" element={<Invoices />} />
+     
           
         </Route>
+             <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
         {/* 404 */}
         <Route path="*" element={<div>Page Not Found</div>} />
