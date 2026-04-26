@@ -74,18 +74,12 @@ router.get("/", authMiddleware, async (req, res) => {
 
     const clients = await clientModel.find({ user: userId });
 
-    if (clients.length === 0) {
-      return res.status(200).json({
-        message: "You don't have any clients yet",
-        clients: [],
-      });
-    }
-
     res.status(200).json({
       clients,
     });
+
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server error",
     });
   }

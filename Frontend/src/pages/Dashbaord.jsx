@@ -15,7 +15,7 @@ const Dashboard = () => {
         const projRes = await getProjects();
         const clientRes = await getClients();
         setProjects(projRes.data.projects)
-      setClients(clientRes.data)
+      setClients(clientRes.data.clients)
 
         
       } catch (error) {

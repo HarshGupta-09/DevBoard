@@ -1,27 +1,17 @@
 import React from "react";
 
-const clients = [
-  {
-    name: "John Doe",
-    company: "Tech Solutions",
-    activeProjects: 2,
-    revenue: "₹40,000",
-  },
-  {
-    name: "Sarah Lee",
-    company: "StartupX",
-    activeProjects: 1,
-    revenue: "₹18,000",
-  },
-  {
-    name: "Amit Sharma",
-    company: "Creative Agency",
-    activeProjects: 3,
-    revenue: "₹65,000",
-  },
-];
+const RecentClients = ({ clients }) => {
+  console.log("Clients:", clients);
 
-const RecentClients = () => {
+  // 🔹 Loading state
+  if (!clients) {
+    return (
+      <div className="text-gray-400 text-sm mt-6">
+        Loading clients...
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#111114] border border-gray-800 rounded-xl p-5">
       
@@ -35,45 +25,49 @@ const RecentClients = () => {
         </button>
       </div>
 
-      {/* List */}
+      {/* Content */}
       <div className="flex flex-col gap-3">
-        {clients.map((client, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between p-3 rounded-lg bg-[#0F0F12] border border-gray-800 hover:bg-[#1a1a1f] transition"
-          >
-            
-            {/* LEFT */}
-            <div className="flex items-center gap-3">
+
+        {/* 🔹 Empty state */}
+        {clients.length === 0 ? (
+          <p className="text-gray-400 text-sm">No clients yet</p>
+        ) : (
+          clients.map((client) => (
+            <div
+              key={client._id}
+              className="flex items-center justify-between p-3 rounded-lg bg-[#0F0F12] border border-gray-800 hover:bg-[#1a1a1f] transition"
+            >
               
-              {/* Avatar */}
-              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold">
-                {client.name.charAt(0)}
+              {/* LEFT */}
+              <div className="flex items-center gap-3">
+                
+                {/* Avatar */}
+                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold">
+                  {client.name?.charAt(0) || "?"}
+                </div>
+
+                {/* Info */}
+                <div>
+                  <p className="text-white text-sm font-medium">
+                    {client.name || "Unnamed"}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {client.company || "No Company"}
+                  </p>
+                </div>
               </div>
 
-              {/* Info */}
-              <div>
-                <p className="text-white text-sm font-medium">
-                  {client.name}
-                </p>
+              {/* RIGHT (temporary placeholder) */}
+              <div className="text-right">
                 <p className="text-xs text-gray-400">
-                  {client.company}
+                  {/* future: projects count */}
+                  —
                 </p>
               </div>
-            </div>
 
-            {/* RIGHT */}
-            <div className="text-right">
-              <p className="text-sm text-white font-medium">
-                {client.activeProjects} Projects
-              </p>
-              <p className="text-xs text-gray-400">
-                {client.revenue}
-              </p>
             </div>
-
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
