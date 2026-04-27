@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button } from "@/components/ui/button";
 import { Plus } from 'lucide-react';
+import { AuthContext } from '@/context/AuthContext';
 const DashboardHeader = () => {
+
+  const { user } = useContext(AuthContext)
   return (
     <>
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -13,7 +16,7 @@ const DashboardHeader = () => {
         </p>
 
         <h1 className="text-2xl md:text-3xl font-semibold text-white">
-          Welcome back, Harsh
+     Welcome back, {user?.name || "User"}
         </h1>
 
         <p className="text-sm text-gray-400">
