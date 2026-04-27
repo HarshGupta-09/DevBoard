@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "./auth.api";
-
+import { AuthContext } from "@/context/AuthContext";
 const Login = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
+    const { setUser } = useContext(AuthContext)
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,19 +17,25 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await loginUser(form);
-      localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
-    } catch (err) {
-      console.log(err);
-      alert("Invalid credentials");
+  try {
+    const res = await loginUser(form);
+
+    if (!res.data?.user || !res.data?.token) {
+      throw new Error("Invalid response");
     }
-  };
 
+    localStorage.setItem("token", res.data.token);
+    setUser(res.data.user);
+
+    navigate("/dashboard");
+  } catch (err) {
+    console.log(err);
+    alert("Invalid credentials");
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#07070A] text-white">
       

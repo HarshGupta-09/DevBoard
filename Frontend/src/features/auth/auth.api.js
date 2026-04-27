@@ -9,3 +9,8 @@ export const loginUser = (data)=>{
 export const signupUser = (data)=>{
    return  api.post("/auth/users/signup",data)
 }
+
+
+export const getMe = ()=>{
+  return api.get("/auth/users/me")
+}
