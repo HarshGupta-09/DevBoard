@@ -34,7 +34,7 @@ const Dashboard = () => {
       <DashboardHeader />
 
       {/* Stats */}
-      <StatSection />
+      <StatSection projects={projects} clients={clients} />
 
       {/* Recent Projects */}
       <RecentProjects projects={projects} />

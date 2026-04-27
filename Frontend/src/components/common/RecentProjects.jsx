@@ -18,7 +18,6 @@ const formatDate = (date) => {
   });
 };
 
-// 🔹 currency formatter
 const formatCurrency = (amount) => {
   if (!amount) return "₹0";
   return `₹${amount.toLocaleString("en-IN")}`;
@@ -27,7 +26,7 @@ const formatCurrency = (amount) => {
 const RecentProjects = ({ projects }) => {
   console.log("Projects:", projects);
 
-  // 🔹 Loading
+ 
   if (!projects) {
     return (
       <div className="mt-8 text-gray-400 text-sm">
