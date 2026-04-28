@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
       } catch (err) {
         console.log("Auth error:", err);
         setUser(null);
-        localStorage.removeItem("token"); // optional cleanup
+        localStorage.removeItem("token"); 
       } finally {
         setLoading(false);
       }
