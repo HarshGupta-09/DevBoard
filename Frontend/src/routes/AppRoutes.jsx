@@ -10,6 +10,7 @@ import AppLayout from "@/layout/AppLayout";
 import Login from "@/features/auth/Login";
 import Register from "@/features/auth/Register";
 import ProtectedRoute from "./ProtectedRoute";
+import PublicRoute from "./PublicRoute";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -34,8 +35,24 @@ const AppRoutes = () => {
           <Route path="/invoices" element={<Invoices />} />
         </Route>
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
+          {/* agar user logged in hai ,and login ya register route mai jaa rha hai url se to usko dashboard mai bhejdo */}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
 
         {/* 404 */}
         <Route path="*" element={<div>Page Not Found</div>} />
