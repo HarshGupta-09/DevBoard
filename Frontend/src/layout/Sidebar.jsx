@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -6,9 +7,15 @@ import {
   CheckSquare,
   FileText,
   Receipt,
+  LogOut,
 } from "lucide-react";
 
+import { AuthContext } from "@/context/AuthContext";
+
 const Sidebar = () => {
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const menu = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Clients", path: "/clients", icon: Users },
@@ -18,14 +25,17 @@ const Sidebar = () => {
     { name: "AI Proposal", path: "/ai-proposals", icon: FileText },
   ];
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div className="w-[240px] h-screen bg-[#0F0F12] border-r border-gray-800 fixed left-0 top-0 flex flex-col px-4 py-5 z-50">
       
       {/* Logo */}
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-white">
-          DevBoard
-        </h1>
+        <h1 className="text-lg font-semibold text-white">DevBoard</h1>
         <p className="text-xs text-gray-500">v1.0</p>
       </div>
 
@@ -53,15 +63,29 @@ const Sidebar = () => {
         })}
       </div>
 
-      {/* Bottom User */}
-      <div className="mt-auto pt-6 border-t border-gray-800 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold">
-          H
+      {/* Bottom Section */}
+      <div className="mt-auto pt-6 border-t border-gray-800 space-y-4">
+        
+        {/* User Info */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold">
+            {user?.name?.charAt(0) || "U"}
+          </div>
+          <div>
+            <p className="text-sm text-white">{user?.name || "User"}</p>
+            <p className="text-xs text-gray-500">{user?.email || ""}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm text-white">Harsh Gupta</p>
-          <p className="text-xs text-gray-500">harsh@devboard.io</p>
-        </div>
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:bg-white/5 hover:text-red-500 transition cursor-pointer"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
+
       </div>
     </div>
   );

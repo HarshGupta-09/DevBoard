@@ -61,7 +61,7 @@ const handleSubmit = async (e) => {
           className="w-full p-2 bg-[#0F0F12] border border-gray-800 rounded focus:outline-none focus:border-indigo-500"
         />
 
-        <button className="w-full bg-indigo-600 hover:bg-indigo-500 transition p-2 rounded font-medium">
+        <button className="w-full bg-indigo-600 hover:bg-indigo-500 transition p-2 rounded font-medium cursor-pointer">
           Login
         </button>
 

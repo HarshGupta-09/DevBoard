@@ -1,9 +1,11 @@
 import { createContext, useEffect, useState } from "react";
 import { getMe } from "../features/auth/auth.api";
 
+
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,9 +35,10 @@ const AuthProvider = ({ children }) => {
   }, []);
 
 
-  const logout = () => {
+const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+ 
   };
 
   return (
