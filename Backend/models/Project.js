@@ -41,7 +41,7 @@ const projectSchema = new mongoose.Schema(
   validate: {
     validator: function (value) {
       if (this.billingType === "fixed") {
-        return value != null;
+        return value != null &&  value >= 0;
       }
       return true;
     },
