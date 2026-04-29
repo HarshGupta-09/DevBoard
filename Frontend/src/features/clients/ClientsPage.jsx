@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import ClientHeader from "./ClientHeader";
 import ClientCard from "./ClientCard";
-import { getClients } from "./clients.api";
-import Loader from "../../components/common/Loader"
+import { getClients, createClient } from "./clients.api";
+import Loader from "../../components/common/Loader";
+import AddClientModal from "./AddClientModal";
 
 const ClientsPage = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  
+  const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,13 +29,24 @@ const ClientsPage = () => {
     fetchData();
   }, []);
 
+ 
+  const handleAddClient = async (data) => {
+    try {
+      const res = await createClient(data);
+
+   
+      setClients((prev) => [res.data.client, ...prev]);
+    } catch (err) {
+      console.log("Create client error:", err);
+    }
+  };
+
   return (
     <div>
-      <ClientHeader count={clients.length} />
+      {/* 🔥 pass setOpen to header */}
+      <ClientHeader count={clients.length} onAddClick={() => setOpen(true)} />
 
-      {loading && (
-        <Loader/>
-      )}
+      {loading && <Loader />}
 
       {error && (
         <p className="text-red-400 mt-6">{error}</p>
@@ -49,6 +65,13 @@ const ClientsPage = () => {
           ))}
         </div>
       )}
+
+      {/* 🔥 modal */}
+      <AddClientModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onAddClient={handleAddClient}
+      />
     </div>
   );
 };

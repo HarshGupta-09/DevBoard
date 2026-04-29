@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-const ClientHeader = ({count}) => {
+const ClientHeader = ({ count, onAddClick }) => {
   return (
     <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       
@@ -29,7 +29,10 @@ const ClientHeader = ({count}) => {
         </div>
 
         {/* Add Client */}
-        <Button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500">
+        <Button
+          onClick={onAddClick}
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 cursor-pointer"
+        >
           <Plus size={16} />
           Add Client
         </Button>
