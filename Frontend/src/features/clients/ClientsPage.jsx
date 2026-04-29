@@ -19,7 +19,7 @@ const ClientsPage = () => {
   const [open, setOpen] = useState(false);
   const [editClientData, setEditClientData] = useState(null);
 
-  // 🔥 Fetch clients
+  //  Fetch clients
   useEffect(() => {
     const fetchData = async () => {
       try {
