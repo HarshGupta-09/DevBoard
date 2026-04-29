@@ -1,13 +1,16 @@
 import React from "react";
-import { Mail, Phone, Briefcase } from "lucide-react";
+import { Mail, Phone, Briefcase, Pencil, Trash2 } from "lucide-react";
 
 const ClientCard = ({
+  _id,
   name,
   email,
   phone,
   company,
   projectCount = 0,
   status = "active",
+  onEdit,
+  onDelete,
 }) => {
   const initials = name
     ?.split(" ")
@@ -37,17 +40,38 @@ const ClientCard = ({
           </div>
         </div>
 
-        {/* Status */}
-        <span
-          className={`text-[10px] px-2 py-1 rounded-full flex items-center gap-1 ${
-            status === "active"
-              ? "bg-green-600/20 text-green-400"
-              : "bg-gray-700 text-gray-400"
-          }`}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-          {status}
-        </span>
+        {/* Right (status + actions) */}
+        <div className="flex items-center gap-2">
+          
+          {/* Status */}
+          <span
+            className={`text-[10px] px-2 py-1 rounded-full flex items-center gap-1 ${
+              status === "active"
+                ? "bg-green-600/20 text-green-400"
+                : "bg-gray-700 text-gray-400"
+            }`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+            {status}
+          </span>
+
+          {/* Edit */}
+          <button
+            onClick={() => onEdit(_id)}
+            className="p-1.5 rounded-md hover:bg-white/5 text-gray-400 hover:text-indigo-400 transition cursor-pointer"
+          >
+            <Pencil size={14} />
+          </button>
+
+          {/* Delete */}
+          <button
+            onClick={() => onDelete(_id)}
+            className="p-1.5 cursor-pointer rounded-md hover:bg-white/5 text-gray-400 hover:text-red-500 transition"
+          >
+            <Trash2 size={14} />
+          </button>
+
+        </div>
       </div>
 
       {/* Contact */}

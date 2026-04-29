@@ -4,6 +4,7 @@ import ClientCard from "./ClientCard";
 import { getClients, createClient } from "./clients.api";
 import Loader from "../../components/common/Loader";
 import AddClientModal from "./AddClientModal";
+import { editClient , deleteClient } from "./clients.api";
 
 const ClientsPage = () => {
   const [clients, setClients] = useState([]);
@@ -13,6 +14,22 @@ const ClientsPage = () => {
   
   const [open, setOpen] = useState(false);
 
+  const handleEdit = ()=>{
+     
+  }
+  const handleDelete = async (id) => {
+  const confirmDelete = confirm("Are you sure you want to delete this client?");
+  if (!confirmDelete) return;
+
+  try {
+    await deleteClient(id);
+    setClients((prev) => prev.filter((c) => c._id !== id));
+
+    alert("Client deleted successfully");
+  } catch (error) {
+    console.log("delete client error", error);
+  }
+};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +38,7 @@ const ClientsPage = () => {
         setClients(res.data.clients || []);
       } catch (err) {
         setError("Failed to load clients");
+        
       } finally {
         setLoading(false);
       }
@@ -43,7 +61,7 @@ const ClientsPage = () => {
 
   return (
     <div>
-      {/* 🔥 pass setOpen to header */}
+     
       <ClientHeader count={clients.length} onAddClick={() => setOpen(true)} />
 
       {loading && <Loader />}
@@ -61,12 +79,12 @@ const ClientsPage = () => {
       {!loading && clients.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {clients.map((client) => (
-            <ClientCard key={client._id} {...client} />
+            <ClientCard key={client._id} {...client}   onEdit={handleEdit}
+  onDelete={handleDelete} />
           ))}
         </div>
       )}
 
-      {/* 🔥 modal */}
       <AddClientModal
         isOpen={open}
         onClose={() => setOpen(false)}
