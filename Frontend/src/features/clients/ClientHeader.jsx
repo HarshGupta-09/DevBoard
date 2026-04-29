@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-const ClientHeader = () => {
+const ClientHeader = ({count}) => {
   return (
     <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       
@@ -12,7 +12,7 @@ const ClientHeader = () => {
           Clients
         </h1>
         <p className="text-sm text-gray-400 mt-1">
-          6 clients
+          {count} clients
         </p>
       </div>
 
