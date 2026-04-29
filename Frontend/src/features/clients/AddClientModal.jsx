@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-const AddClientModal = ({ isOpen, onClose, onAddClient }) => {
+const AddClientModal = ({
+  isOpen,
+  onClose,
+  onAddClient,
+  onUpdateClient,
+  editClient,
+}) => {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -10,6 +16,32 @@ const AddClientModal = ({ isOpen, onClose, onAddClient }) => {
     address: "",
     notes: "",
   });
+
+  const isEdit = !!editClient;
+
+  // 🔥 Prefill form when editing
+  useEffect(() => {
+    if (editClient) {
+      setForm({
+        name: editClient.name || "",
+        email: editClient.email || "",
+        phone: editClient.phone || "",
+        company: editClient.company || "",
+        address: editClient.address || "",
+        notes: editClient.notes || "",
+      });
+    } else {
+      // reset when switching back to create
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        address: "",
+        notes: "",
+      });
+    }
+  }, [editClient]);
 
   if (!isOpen) return null;
 
@@ -26,24 +58,22 @@ const AddClientModal = ({ isOpen, onClose, onAddClient }) => {
       return;
     }
 
-    await onAddClient(form);
+    try {
+      if (isEdit) {
+        await onUpdateClient(editClient._id, form);
+      } else {
+        await onAddClient(form);
+      }
 
-    setForm({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      address: "",
-      notes: "",
-    });
-
-    onClose();
+      onClose();
+    } catch (error) {
+      console.log("Modal submit error:", error);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       
-      {/* Modal Box */}
       <div className="w-full max-w-xl bg-[#111114] border border-gray-800 rounded-xl p-6 relative">
 
         {/* Close */}
@@ -56,15 +86,16 @@ const AddClientModal = ({ isOpen, onClose, onAddClient }) => {
 
         {/* Header */}
         <h2 className="text-lg font-semibold text-white">
-          New Client
+          {isEdit ? "Edit Client" : "New Client"}
         </h2>
         <p className="text-sm text-gray-400 mt-1">
-          Store contact info and notes.
+          {isEdit
+            ? "Update client information"
+            : "Store contact info and notes."}
         </p>
 
         {/* Form */}
         <div className="grid grid-cols-2 gap-4 mt-6">
-          
           <input
             name="name"
             placeholder="Name *"
@@ -133,7 +164,7 @@ const AddClientModal = ({ isOpen, onClose, onAddClient }) => {
             onClick={handleSubmit}
             className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white"
           >
-            Save Client
+            {isEdit ? "Update Client" : "Save Client"}
           </button>
         </div>
       </div>
