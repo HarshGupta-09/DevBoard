@@ -1,10 +1,13 @@
 import React from 'react'
+import ProjectHeader from './ProjectHeader'
 
 const ProjectsPage = () => {
   return (
+    <>
     <div>
-      ProjectsPage
+   <ProjectHeader/>
     </div>
+    </>
   )
 }
 

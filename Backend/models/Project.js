@@ -13,6 +13,11 @@ const projectSchema = new mongoose.Schema(
       ref: "Client",
       required: true,
     },
+    billingType: {
+      type: String,
+      enum: ["fixed", "milestone"],
+      default: "fixed",
+    },
 
     title: {
       type: String,
@@ -30,10 +35,18 @@ const projectSchema = new mongoose.Schema(
       default: "active",
     },
 
-    budget: {
-      type: Number,
+  budget: {
+  type: Number,
+  validate: {
+    validator: function (value) {
+      if (this.billingType === "fixed") {
+        return value != null;
+      }
+      return true;
     },
-
+    message: "Budget is required for fixed billing",
+  },
+},
     startDate: {
       type: Date,
       default: Date.now,
@@ -45,7 +58,7 @@ const projectSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 projectSchema.index({ user: 1, client: 1, title: 1 }, { unique: true });

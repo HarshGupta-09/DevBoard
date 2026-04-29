@@ -28,7 +28,7 @@ const milestoneSchema = new mongoose.Schema({
 
     amount: {
         type: Number,
-        default: null,
+        default: null,  
     },
 
     order: {
