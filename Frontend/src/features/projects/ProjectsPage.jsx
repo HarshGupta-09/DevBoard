@@ -3,7 +3,7 @@ import ProjectHeader from "./ProjectHeader";
 import ProjectCard from "./ProjectCard";
 import { getProjects } from "./projects.api";
 import Loader from "../../components/common/Loader";
-
+import { updateProject } from "./projects.api";
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,21 @@ const ProjectsPage = () => {
 
     fetchProjects();
   }, []);
+  const handleMarkComplete = async (id) => {
+  try {
+    const res = await updateProject(id, {
+      status: "completed",
+    });
 
+    setProjects((prev) =>
+      prev.map((p) =>
+        p._id === id ? res.data.project : p
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
   
   const activeProjects = projects.filter(
     (p) => p.status === "active"
@@ -70,7 +84,7 @@ const ProjectsPage = () => {
                 </p>
               ) : (
                 activeProjects.map((project) => (
-                  <ProjectCard key={project._id} {...project} />
+                  <ProjectCard key={project._id} {...project} onMarkComplete={handleMarkComplete}  />
                 ))
               )}
             </div>
