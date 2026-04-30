@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Clients from "../features/clients/ClientsPage";
 import Projects from "../features/projects/ProjectsPage";
-import Proposals from "../features/proposals/ProposalPage";
+import Proposals from "../features/proposals/AIProposalPage";
 import Milestones from "../features/milestones/MilestonesPage";
 import Invoices from "../features/invoices/InvoicesPage";
 import Dashboard from "../pages/Dashbaord";
