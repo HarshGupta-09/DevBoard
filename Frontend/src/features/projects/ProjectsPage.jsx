@@ -7,7 +7,7 @@ import {
   getProjects,
   updateProject,
   createProject,
-  deleteProject
+  deleteProject,
 } from "./projects.api";
 
 import {
@@ -25,10 +25,12 @@ const ProjectsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [open, setOpen] = useState(false); // projectModal
+  // 🔥 better naming
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [clientModalOpen, setClientModalOpen] = useState(false);
 
   const [selectedClient, setSelectedClient] = useState("");
+  const [editProjectData, setEditProjectData] = useState(null);
 
   // 🔥 Fetch Clients
   useEffect(() => {
@@ -44,7 +46,7 @@ const ProjectsPage = () => {
     fetchClients();
   }, []);
 
-  // Fetch Projects
+  // 🔥 Fetch Projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -60,55 +62,79 @@ const ProjectsPage = () => {
     fetchProjects();
   }, []);
 
-const handleDelete = async (id) => {
-  const confirmDelete = confirm("Are you sure you want to delete this project?");
-  if (!confirmDelete) return;
+  // 🔥 DELETE
+  const handleDelete = async (id) => {
+    const confirmDelete = confirm("Are you sure you want to delete this project?");
+    if (!confirmDelete) return;
 
-  try {
-    await deleteProject(id);
+    try {
+      await deleteProject(id);
 
-    setProjects((prev) =>
-      prev.filter((p) => p?._id !== id)
-    );
+      setProjects((prev) =>
+        prev.filter((p) => p?._id !== id)
+      );
+    } catch (error) {
+      console.log("Delete Project error:", error);
+    }
+  };
 
-  } catch (error) {
-    console.log("Delete Project error:", error);
-  }
-};
+  // 🔥 EDIT CLICK
+  const handleEdit = (project) => {
+    setEditProjectData(project);
+    setProjectModalOpen(true);
+  };
 
+  // 🔥 UPDATE PROJECT
+  const handleUpdateProject = async (id, data) => {
+    try {
+      const res = await updateProject(id, data);
 
-  //  MARK COMPLETE
+      const updatedProject = res.data.updatedProject;
 
+      setProjects((prev) =>
+        prev.map((p) =>
+          p?._id === id ? updatedProject : p
+        )
+      );
+    } catch (err) {
+      console.log("Update error:", err.response?.data || err);
+    }
+  };
+
+  // 🔥 MARK COMPLETE
   const handleMarkComplete = async (id) => {
-  try {
-    const res = await updateProject(id, {
-      status: "completed",
-    });
+    try {
+      const res = await updateProject(id, {
+        status: "completed",
+      });
 
-    const updatedProject = res.data.updatedProject; // ✅ FIX
+      const updatedProject = res.data.updatedProject;
 
-    setProjects((prev) =>
-    prev.map((p) =>
-  p?._id === id ? updatedProject : p
-)
-    );
-  } catch (err) {
-    console.log(err);
-  }
-};
+      setProjects((prev) =>
+        prev.map((p) =>
+          p?._id === id ? updatedProject : p
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  //  ADD PROJECT
+  // 🔥 ADD PROJECT
   const handleAddProject = async (data) => {
     try {
       const res = await createProject(data);
 
-      setProjects((prev) => [res.data.project, ...prev]);
+      setProjects((prev) => [
+        res.data.project,
+        ...prev,
+      ]);
     } catch (err) {
       console.log("Create project error", err);
     }
   };
 
-  //  ADD CLIENT (from project modal)
+  // 🔥 ADD CLIENT (from modal)
   const handleAddClient = async (data) => {
     try {
       const res = await createClient(data);
@@ -117,7 +143,7 @@ const handleDelete = async (id) => {
 
       setClients((prev) => [newClient, ...prev]);
 
-      //  auto select
+      // 🔥 auto select
       setSelectedClient(newClient._id);
 
       setClientModalOpen(false);
@@ -126,26 +152,27 @@ const handleDelete = async (id) => {
     }
   };
 
-  //  Filters
+  // 🔥 SAFE FILTERS
   const activeProjects = projects.filter(
-    (p) => p.status === "active"
+    (p) => p?.status === "active"
   );
 
   const completedProjects = projects.filter(
-    (p) => p.status === "completed"
+    (p) => p?.status === "completed"
   );
 
   return (
     <div>
-   
+      {/* Header */}
       <ProjectHeader
         count={projects.length}
-        onAddClick={() => setOpen(true)}
+        onAddClick={() => setProjectModalOpen(true)}
       />
 
-     
+      {/* Loading */}
       {loading && <Loader />}
 
+      {/* Error */}
       {error && (
         <p className="text-red-400 mt-6">{error}</p>
       )}
@@ -180,7 +207,6 @@ const handleDelete = async (id) => {
                     onMarkComplete={handleMarkComplete}
                     onDelete={handleDelete}
                     onEdit={() => handleEdit(project)}
-                 
                   />
                 ))
               )}
@@ -213,20 +239,23 @@ const handleDelete = async (id) => {
         </div>
       )}
 
-      {/*  Project Modal */}
+      {/* 🔥 Project Modal */}
       <AddProjectModal
-        isOpen={open}
+        isOpen={projectModalOpen}
         onClose={() => {
-          setOpen(false);
-          setSelectedClient(""); // reset
+          setProjectModalOpen(false);
+          setSelectedClient("");
+          setEditProjectData(null); // 🔥 FIXED BUG
         }}
         onAddProject={handleAddProject}
+        onUpdateProject={handleUpdateProject}
+        editProject={editProjectData}
         clients={clients}
         onOpenClientModal={() => setClientModalOpen(true)}
         selectedClient={selectedClient}
       />
 
-      {/*Client Modal */}
+      {/* 🔥 Client Modal */}
       <AddClientModal
         isOpen={clientModalOpen}
         onClose={() => setClientModalOpen(false)}

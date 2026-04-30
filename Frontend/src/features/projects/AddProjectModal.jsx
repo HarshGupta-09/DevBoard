@@ -7,7 +7,9 @@ const AddProjectModal = ({
   onAddProject,
   clients = [],
   onOpenClientModal,
-  selectedClient, 
+  selectedClient,
+  editProject,
+  onUpdateProject,
 }) => {
   const [form, setForm] = useState({
     title: "",
@@ -18,7 +20,7 @@ const AddProjectModal = ({
     description: "",
   });
 
-  //  reset on close
+  // 🔥 RESET on close
   useEffect(() => {
     if (!isOpen) {
       setForm({
@@ -32,7 +34,23 @@ const AddProjectModal = ({
     }
   }, [isOpen]);
 
-  
+  // 🔥 PREFILL when editing
+  useEffect(() => {
+    if (editProject) {
+      setForm({
+        title: editProject.title || "",
+        client: editProject.client?._id || editProject.client || "",
+        billingType: editProject.billingType || "fixed",
+        budget: editProject.budget || "",
+        deadline: editProject.deadline
+          ? editProject.deadline.split("T")[0]
+          : "",
+        description: editProject.description || "",
+      });
+    }
+  }, [editProject]);
+
+  // 🔥 AUTO SELECT newly created client
   useEffect(() => {
     if (selectedClient) {
       setForm((prev) => ({
@@ -51,18 +69,31 @@ const AddProjectModal = ({
     });
   };
 
+  // 🔥 MAIN SUBMIT (ADD + EDIT)
   const handleSubmit = async () => {
     if (!form.title || !form.client || !form.budget) {
       alert("Title, Client and Budget are required");
       return;
     }
 
-    await onAddProject({
+    const payload = {
       ...form,
       budget: Number(form.budget),
-    });
+    };
 
-    onClose();
+    try {
+      if (editProject) {
+        // 🔥 UPDATE MODE
+        await onUpdateProject(editProject._id, payload);
+      } else {
+        // 🔥 CREATE MODE
+        await onAddProject(payload);
+      }
+
+      onClose();
+    } catch (err) {
+      console.log("Submit error:", err);
+    }
   };
 
   return (
@@ -80,7 +111,7 @@ const AddProjectModal = ({
 
         {/* Header */}
         <h2 className="text-lg font-semibold text-white">
-          New Project
+          {editProject ? "Edit Project" : "New Project"}
         </h2>
 
         <div className="mt-6 space-y-4">
@@ -173,7 +204,7 @@ const AddProjectModal = ({
 
           </div>
 
-        
+          {/* Description */}
           <div>
             <label className="text-sm text-gray-400">Description</label>
             <textarea
@@ -186,7 +217,7 @@ const AddProjectModal = ({
 
         </div>
 
-        
+        {/* Footer */}
         <div className="flex justify-end gap-3 mt-6">
           
           <button
@@ -200,7 +231,7 @@ const AddProjectModal = ({
             onClick={handleSubmit}
             className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white"
           >
-            Save Project
+            {editProject ? "Update Project" : "Save Project"}
           </button>
 
         </div>
