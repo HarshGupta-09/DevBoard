@@ -1,15 +1,49 @@
 import React, { useEffect, useState } from "react";
 import ProjectHeader from "./ProjectHeader";
 import ProjectCard from "./ProjectCard";
-import { getProjects } from "./projects.api";
 import Loader from "../../components/common/Loader";
-import { updateProject } from "./projects.api";
+
+import {
+  getProjects,
+  updateProject,
+  createProject,
+} from "./projects.api";
+
+import {
+  getClients,
+  createClient,
+} from "../clients/clients.api";
+
+import AddProjectModal from "./AddProjectModal";
+import AddClientModal from "../clients/AddClientModal";
+
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
+  const [clients, setClients] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [open, setOpen] = useState(false); // projectModal
+  const [clientModalOpen, setClientModalOpen] = useState(false);
 
+  const [selectedClient, setSelectedClient] = useState("");
+
+  // 🔥 Fetch Clients
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const res = await getClients();
+        setClients(res.data.clients || []);
+      } catch (err) {
+        console.log("Client fetch error", err);
+      }
+    };
+
+    fetchClients();
+  }, []);
+
+  // Fetch Projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -24,22 +58,56 @@ const ProjectsPage = () => {
 
     fetchProjects();
   }, []);
-  const handleMarkComplete = async (id) => {
+
+  //  MARK COMPLETE
+const handleMarkComplete = async (id) => {
   try {
     const res = await updateProject(id, {
       status: "completed",
     });
 
+    const updatedProject = res.data.updatedProject; // ✅ FIX
+
     setProjects((prev) =>
-      prev.map((p) =>
-        p._id === id ? res.data.project : p
-      )
+    prev.map((p) =>
+  p?._id === id ? updatedProject : p
+)
     );
   } catch (err) {
     console.log(err);
   }
 };
-  
+
+  //  ADD PROJECT
+  const handleAddProject = async (data) => {
+    try {
+      const res = await createProject(data);
+
+      setProjects((prev) => [res.data.project, ...prev]);
+    } catch (err) {
+      console.log("Create project error", err);
+    }
+  };
+
+  //  ADD CLIENT (from project modal)
+  const handleAddClient = async (data) => {
+    try {
+      const res = await createClient(data);
+
+      const newClient = res.data.client;
+
+      setClients((prev) => [newClient, ...prev]);
+
+      //  auto select
+      setSelectedClient(newClient._id);
+
+      setClientModalOpen(false);
+    } catch (err) {
+      console.log("Create client error", err);
+    }
+  };
+
+  //  Filters
   const activeProjects = projects.filter(
     (p) => p.status === "active"
   );
@@ -50,12 +118,15 @@ const ProjectsPage = () => {
 
   return (
     <div>
-     
-      <ProjectHeader count={projects.length} />
+   
+      <ProjectHeader
+        count={projects.length}
+        onAddClick={() => setOpen(true)}
+      />
 
+     
       {loading && <Loader />}
 
-      
       {error && (
         <p className="text-red-400 mt-6">{error}</p>
       )}
@@ -71,7 +142,7 @@ const ProjectsPage = () => {
       {!loading && projects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           
-          {/* Active Column */}
+          {/* Active */}
           <div className="bg-[#111114] border border-gray-800 rounded-xl p-4">
             <h2 className="text-white font-medium mb-4">
               In Progress ({activeProjects.length})
@@ -84,13 +155,17 @@ const ProjectsPage = () => {
                 </p>
               ) : (
                 activeProjects.map((project) => (
-                  <ProjectCard key={project._id} {...project} onMarkComplete={handleMarkComplete}  />
+                  <ProjectCard
+                    key={project._id}
+                    {...project}
+                    onMarkComplete={handleMarkComplete}
+                  />
                 ))
               )}
             </div>
           </div>
 
-          {/* Completed Column */}
+          {/* Completed */}
           <div className="bg-[#111114] border border-gray-800 rounded-xl p-4">
             <h2 className="text-white font-medium mb-4">
               Completed ({completedProjects.length})
@@ -103,14 +178,36 @@ const ProjectsPage = () => {
                 </p>
               ) : (
                 completedProjects.map((project) => (
-                  <ProjectCard key={project._id} {...project} />
+                  <ProjectCard
+                    key={project._id}
+                    {...project}
+                  />
                 ))
               )}
             </div>
           </div>
-
         </div>
       )}
+
+      {/*  Project Modal */}
+      <AddProjectModal
+        isOpen={open}
+        onClose={() => {
+          setOpen(false);
+          setSelectedClient(""); // reset
+        }}
+        onAddProject={handleAddProject}
+        clients={clients}
+        onOpenClientModal={() => setClientModalOpen(true)}
+        selectedClient={selectedClient}
+      />
+
+      {/*Client Modal */}
+      <AddClientModal
+        isOpen={clientModalOpen}
+        onClose={() => setClientModalOpen(false)}
+        onAddClient={handleAddClient}
+      />
     </div>
   );
 };
