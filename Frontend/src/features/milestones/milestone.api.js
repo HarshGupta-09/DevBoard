@@ -1,8 +1,8 @@
 import api from "../../services/axios"
 
-export const getMilestonesByProject = (id)=>{
-    return api.get(`/milestones/${id}`)
-}
+// export const getMilestonesByProject = (id)=>{
+//     return api.get(`/milestones/${id}`)
+// }
 export const updateMilestone = (id,data)=>{
     return api.put(`/milestones/${id}`,data)
 }
@@ -12,3 +12,13 @@ export const deleteMilestone = (id)=>{
 export const createMilestone = (data)=>{
     return api.post("/milestones",data)
 }
+export const getMilestones = (projectId) => {
+  return api.get("/milestones", {
+    params: { projectId },
+  });
+};
+export const getMilestonesByProject = (projectId) => {
+  return api.get("/milestones", {
+    params: { projectId },
+  });
+};

@@ -105,28 +105,36 @@ router.get("/", authMiddleware, async (req, res) => {
     const userId = req.user.id;
     const { projectId } = req.query;
 
-    if (!projectId) {
-      return res.status(400).json({
-        message: "Project ID is required",
-      });
+    let filter = { user: userId };
+
+    //  If projectId provided → validate & filter
+    if (projectId) {
+      const project = await projectModel.findById(projectId);
+
+      if (!project) {
+        return res.status(404).json({
+          message: "Project not found",
+        });
+      }
+
+      if (project.user.toString() !== userId) {
+        return res.status(403).json({
+          message: "Access denied",
+        });
+      }
+
+      filter.project = projectId;
     }
 
-    const project = await projectModel.findById(projectId);
-
-    if (!project) {
-      return res.status(404).json({
-        message: "Project not found",
-      });
-    }
-
-    if (project.user.toString() !== userId) {
-      return res.status(403).json({
-        message: "Access denied",
-      });
-    }
-
+    //  Fetch milestones (global OR project-specific)
     const milestones = await milestoneModel
-      .find({ project: projectId })
+      .find(filter)
+      .populate({
+        path: "project",
+        populate: {
+          path: "client",
+        },
+      })
       .sort({ order: 1 });
 
     res.status(200).json({
