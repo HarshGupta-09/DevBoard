@@ -7,6 +7,7 @@ const AddMilestoneModal = ({
   onAdd,
   projectId,
   editData,
+  onUpdate,
 }) => {
   const [form, setForm] = useState({
     title: "",
@@ -14,7 +15,7 @@ const AddMilestoneModal = ({
     dueDate: "",
   });
 
-  //  Prefill (edit case)
+  // 🔥 Prefill (edit mode)
   useEffect(() => {
     if (editData) {
       setForm({
@@ -23,6 +24,13 @@ const AddMilestoneModal = ({
         dueDate: editData.dueDate
           ? editData.dueDate.split("T")[0]
           : "",
+      });
+    } else {
+      // reset when switching back to add mode
+      setForm({
+        title: "",
+        amount: "",
+        dueDate: "",
       });
     }
   }, [editData]);
@@ -36,39 +44,51 @@ const AddMilestoneModal = ({
     });
   };
 
-const handleSubmit = async () => {
-  if (!form.title) {
-    alert("Title is required");
-    return;
-  }
+  // 🔥 FIXED SUBMIT
+  const handleSubmit = async () => {
+    if (!form.title.trim()) {
+      alert("Title is required");
+      return;
+    }
 
-  const payload = {
-    title: form.title.trim(),
-    project: projectId,
+    const payload = {
+      title: form.title.trim(),
+      project: projectId,
+    };
+
+    if (form.amount) {
+      payload.amount = Number(form.amount);
+    }
+
+    if (form.dueDate) {
+      payload.dueDate = form.dueDate;
+    }
+
+    // 🔥 order only for CREATE
+    if (!editData) {
+      payload.order = Date.now();
+    }
+
+    try {
+      if (editData) {
+        await onUpdate(editData._id, payload);
+      } else {
+        await onAdd(payload);
+      }
+
+      // reset
+      setForm({
+        title: "",
+        amount: "",
+        dueDate: "",
+      });
+
+      onClose();
+    } catch (err) {
+      console.log("Submit error:", err);
+    }
   };
 
-  // ✅ only add if present
-  if (form.amount) {
-    payload.amount = Number(form.amount);
-  }
-
-  if (form.dueDate) {
-    payload.dueDate = form.dueDate;
-  }
-
-  //  IMPORTANT (order)
-  payload.order = Date.now(); // temporary unique order
-
-  await onAdd(payload);
-
-  setForm({
-    title: "",
-    amount: "",
-    dueDate: "",
-  });
-
-  onClose();
-};
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
 
@@ -84,7 +104,7 @@ const handleSubmit = async () => {
 
         {/* Header */}
         <h2 className="text-lg font-semibold text-white">
-          Add Milestone
+          {editData ? "Edit Milestone" : "Add Milestone"}
         </h2>
 
         {/* Form */}
@@ -119,19 +139,21 @@ const handleSubmit = async () => {
 
         {/* Footer */}
         <div className="flex justify-end gap-3 mt-6">
+
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm border border-gray-700 rounded-lg text-gray-300"
+            className="px-4 py-2 text-sm border border-gray-700 rounded-lg text-gray-300 hover:bg-[#1a1a1f]"
           >
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
-            className="px-4 cursor-pointer py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white"
+            className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white"
           >
-            Save
+            {editData ? "Update" : "Save"}
           </button>
+
         </div>
 
       </div>

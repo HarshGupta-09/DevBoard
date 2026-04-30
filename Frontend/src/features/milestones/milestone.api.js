@@ -6,6 +6,9 @@ export const getMilestonesByProject = (id)=>{
 export const updateMilestone = (id,data)=>{
     return api.put(`/milestones/${id}`,data)
 }
+export const deleteMilestone = (id)=>{
+    return api.delete(`/milestones/${id}`)
+}
 export const createMilestone = (data)=>{
     return api.post("/milestones",data)
 }
