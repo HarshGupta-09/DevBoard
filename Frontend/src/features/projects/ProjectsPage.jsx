@@ -25,14 +25,14 @@ const ProjectsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔥 better naming
+  //  better naming
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [clientModalOpen, setClientModalOpen] = useState(false);
 
   const [selectedClient, setSelectedClient] = useState("");
   const [editProjectData, setEditProjectData] = useState(null);
 
-  // 🔥 Fetch Clients
+  // Fetch Clients
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -46,7 +46,7 @@ const ProjectsPage = () => {
     fetchClients();
   }, []);
 
-  // 🔥 Fetch Projects
+  //  Fetch Projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -62,7 +62,7 @@ const ProjectsPage = () => {
     fetchProjects();
   }, []);
 
-  // 🔥 DELETE
+  //  DELETE
   const handleDelete = async (id) => {
     const confirmDelete = confirm("Are you sure you want to delete this project?");
     if (!confirmDelete) return;
@@ -78,13 +78,13 @@ const ProjectsPage = () => {
     }
   };
 
-  // 🔥 EDIT CLICK
+  //  EDIT CLICK
   const handleEdit = (project) => {
     setEditProjectData(project);
     setProjectModalOpen(true);
   };
 
-  // 🔥 UPDATE PROJECT
+  //  UPDATE PROJECT
   const handleUpdateProject = async (id, data) => {
     try {
       const res = await updateProject(id, data);
@@ -101,7 +101,7 @@ const ProjectsPage = () => {
     }
   };
 
-  // 🔥 MARK COMPLETE
+  // MARK COMPLETE
   const handleMarkComplete = async (id) => {
     try {
       const res = await updateProject(id, {
@@ -120,7 +120,7 @@ const ProjectsPage = () => {
     }
   };
 
-  // 🔥 ADD PROJECT
+  // ADD PROJECT
   const handleAddProject = async (data) => {
     try {
       const res = await createProject(data);
@@ -134,7 +134,7 @@ const ProjectsPage = () => {
     }
   };
 
-  // 🔥 ADD CLIENT (from modal)
+  //  ADD CLIENT (from modal)
   const handleAddClient = async (data) => {
     try {
       const res = await createClient(data);
@@ -143,7 +143,7 @@ const ProjectsPage = () => {
 
       setClients((prev) => [newClient, ...prev]);
 
-      // 🔥 auto select
+      //  auto select
       setSelectedClient(newClient._id);
 
       setClientModalOpen(false);
@@ -152,7 +152,7 @@ const ProjectsPage = () => {
     }
   };
 
-  // 🔥 SAFE FILTERS
+  //  SAFE FILTERS
   const activeProjects = projects.filter(
     (p) => p?.status === "active"
   );
@@ -239,13 +239,13 @@ const ProjectsPage = () => {
         </div>
       )}
 
-      {/* 🔥 Project Modal */}
+      {/*  Project Modal */}
       <AddProjectModal
         isOpen={projectModalOpen}
         onClose={() => {
           setProjectModalOpen(false);
           setSelectedClient("");
-          setEditProjectData(null); // 🔥 FIXED BUG
+          setEditProjectData(null); //  FIXED BUG
         }}
         onAddProject={handleAddProject}
         onUpdateProject={handleUpdateProject}
@@ -255,7 +255,7 @@ const ProjectsPage = () => {
         selectedClient={selectedClient}
       />
 
-      {/* 🔥 Client Modal */}
+      {/*  Client Modal */}
       <AddClientModal
         isOpen={clientModalOpen}
         onClose={() => setClientModalOpen(false)}

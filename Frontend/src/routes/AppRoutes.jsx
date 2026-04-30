@@ -11,6 +11,7 @@ import Login from "@/features/auth/Login";
 import Register from "@/features/auth/Register";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
+import ProjectDetailPage from "@/features/projects/ProjectDetailPage";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -33,6 +34,7 @@ const AppRoutes = () => {
           <Route path="/milestones" element={<Milestones />} />
           <Route path="/ai-proposals" element={<Proposals />} />
           <Route path="/invoices" element={<Invoices />} />
+          <Route path="/projects/:id" element={<ProjectDetailPage />} />
         </Route>
 
 

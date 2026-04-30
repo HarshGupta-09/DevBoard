@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, IndianRupee, Pencil, Trash2, Check } from "lucide-react";
 
 const ProjectCard = ({
@@ -12,8 +13,9 @@ const ProjectCard = ({
   onEdit,
   onDelete,
 }) => {
+  const navigate = useNavigate();
   return (
-    <div className="bg-[#0F0F12] border border-gray-800 rounded-lg p-4 hover:border-gray-700 transition">
+    <div onClick={() => navigate(`/projects/${_id}`)} className="bg-[#0F0F12] border border-gray-800 rounded-lg p-4 hover:border-gray-700 transition cursor-pointer">
       {/* Top */}
       <div className="flex items-start justify-between">
         <div>
@@ -61,7 +63,9 @@ const ProjectCard = ({
         <div className="flex items-center gap-3">
           {/* Edit */}
           <button
-            onClick={() => onEdit?.(_id)}
+            onClick={(e) => { 
+                e.stopPropagation();
+              onEdit?.(_id)}}
             className="text-gray-400 hover:text-white transition"
           >
             <Pencil size={14} />
@@ -69,7 +73,9 @@ const ProjectCard = ({
 
           {/* Delete */}
           <button
-            onClick={() => onDelete?.(_id)}
+            onClick={(e) =>{ 
+                e.stopPropagation();
+              onDelete?.(_id)}}
             className="text-gray-400 hover:text-red-500 transition"
           >
             <Trash2 size={14} />
@@ -79,7 +85,9 @@ const ProjectCard = ({
         {/* Right action */}
         {status === "active" && (
           <button
-            onClick={() => onMarkComplete?.(_id)}
+            onClick={(e) => { 
+                e.stopPropagation();
+              onMarkComplete?.(_id)}}
             className="flex cursor-pointer items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-green-500/30 bg-green-600/10 text-green-400 hover:bg-green-600/20 hover:border-green-500 transition"
           >
             <Check size={14} />
