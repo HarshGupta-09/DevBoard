@@ -7,6 +7,7 @@ import {
   getProjects,
   updateProject,
   createProject,
+  deleteProject
 } from "./projects.api";
 
 import {
@@ -59,8 +60,26 @@ const ProjectsPage = () => {
     fetchProjects();
   }, []);
 
+const handleDelete = async (id) => {
+  const confirmDelete = confirm("Are you sure you want to delete this project?");
+  if (!confirmDelete) return;
+
+  try {
+    await deleteProject(id);
+
+    setProjects((prev) =>
+      prev.filter((p) => p?._id !== id)
+    );
+
+  } catch (error) {
+    console.log("Delete Project error:", error);
+  }
+};
+
+
   //  MARK COMPLETE
-const handleMarkComplete = async (id) => {
+
+  const handleMarkComplete = async (id) => {
   try {
     const res = await updateProject(id, {
       status: "completed",
@@ -159,6 +178,9 @@ const handleMarkComplete = async (id) => {
                     key={project._id}
                     {...project}
                     onMarkComplete={handleMarkComplete}
+                    onDelete={handleDelete}
+                    onEdit={() => handleEdit(project)}
+                 
                   />
                 ))
               )}
@@ -181,6 +203,8 @@ const handleMarkComplete = async (id) => {
                   <ProjectCard
                     key={project._id}
                     {...project}
+                    onDelete={handleDelete}
+                    onEdit={() => handleEdit(project)}
                   />
                 ))
               )}

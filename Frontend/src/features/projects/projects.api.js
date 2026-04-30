@@ -11,3 +11,6 @@ export const createProject = (data)=>{
 export const updateProject = (id,data)=>{
     return api.put(`/projects/${id}`,data)
 }
+export const deleteProject = (id)=>{
+    return api.delete(`/projects/${id}`)
+}
