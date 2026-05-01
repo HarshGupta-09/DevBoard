@@ -1,7 +1,8 @@
-import express from "express"
-import authMiddleware from "../middlewares/authMiddleware.js"
-import {model } from "../utils/gemini.js"
+import express from "express";
+import authMiddleware from "../middlewares/authMiddleware.js";
+import groq from "../utils/groq.js";
 import { z } from "zod";
+
 const router = express.Router();
 
 const proposalSchema = z.object({
@@ -13,7 +14,6 @@ const proposalSchema = z.object({
 
 router.post("/generate-proposal", authMiddleware, async (req, res) => {
   try {
-   
     const result = proposalSchema.safeParse(req.body);
 
     if (!result.success) {
@@ -45,8 +45,11 @@ Instructions:
 Return only the proposal text.
 `;
 
-    const resultAI = await model.generateContent(prompt);
-    const proposal = resultAI.response.text();
+ const response = await groq.chat.completions.create({
+  model: "llama-3.3-70b-versatile", // ✅ THIS ONE
+  messages: [{ role: "user", content: prompt }],
+});
+    const proposal = response.choices[0]?.message?.content;
 
     if (!proposal) {
       return res.status(500).json({
@@ -57,6 +60,7 @@ Return only the proposal text.
     res.status(200).json({ proposal });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: "Failed to generate proposal",
       error: error.message,
@@ -64,5 +68,4 @@ Return only the proposal text.
   }
 });
 
-
-export default router
+export default router;
