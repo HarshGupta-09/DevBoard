@@ -14,7 +14,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
 }));
 
 //Middlwares
@@ -38,7 +38,7 @@ app.use("/api/ai",aiRouter);
 
 
 connectDB();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(3000,()=>{
     console.log(`Server Running On PORT :${port}`)
